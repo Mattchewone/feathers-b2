@@ -10,14 +10,14 @@ module.exports = function () {
   // const Model = createModel(app);
   // const paginate = app.get('paginate');
 
-  var b2 = new B2({
+  const b2 = new B2({
     accountId: 'accountId',
     applicationKey: 'applicationKey'
   });
 
   const options = {
     name: 'files',
-    model: b2
+    Model: b2
     // paginate
   };
 
