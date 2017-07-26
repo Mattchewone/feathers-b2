@@ -7,7 +7,7 @@ const multer = require('multer');
 const multipartMiddleware = multer();
 
 const B2 = require('backblaze-b2')
-const { files: fileService, buckets } = require('../lib/')
+const { files: fileService, buckets: bucketService } = require('../lib/')
 
 // Setup the B2 SDK
 const b2 = new B2({
@@ -16,7 +16,6 @@ const b2 = new B2({
 });
 // fileService options
 const options = {
-  name: 'files',
   Model: b2
 };
 
@@ -44,7 +43,7 @@ const app = feathers()
     // use the fileService
     fileService(options)
   )
-// app.configure(fileService);
+  .use('/buckets', bucketService(options))
 
 // A basic error handler, just like Express
 app.use(handler());
