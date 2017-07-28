@@ -1,0 +1,21 @@
+{
+  "name": "feathers-b2-example",
+  "version": "1.0.0",
+  "description": "Example app using feathers-b2 uploads",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "backblaze-b2": "^1.0.2",
+    "body-parser": "^1.17.2",
+    "feathers": "^2.1.7",
+    "feathers-errors": "^2.9.1",
+    "feathers-rest": "^1.8.0",
+    "feathers-socketio": "^2.0.0",
+    "multer": "^1.3.0"
+  }
+}

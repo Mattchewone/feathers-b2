@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>File Upload Demo</title>
+</head>
+<body>
+  <img src="/backblaze-logo.gif" alt="Backblaze Logo">
+
+  <!-- Begin App -->
+  <div id="app">
+    <upload-form></upload-form>
+  </div>
+
+  <!-- Begin Upload Form -->
+  <script type="text/x-template" id="upload-form">
+    <div>
+      <form @submit.prevent="submit">
+        <input type="file" name="files" id="files" @change="handleFilesChange($event.target.name, $event.target.files)">
+        <button type="submit">Submit</button>
+      </form>
+
+      <div>
+        <h1 v-if="uploads.length">Files Uploaded to Backblaze B2</h1>
+        <div v-for="upload in uploads">
+          <img :src="getFilePath(upload)" alt="" width="360">
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script src="/vue.js"></script>
+  <script src="/axios.js"></script>
+  <script>
+    Vue.component('upload-form',{
+      template: `#upload-form`,
+      data () {
+        return {
+          files: [],
+          uploads: []
+        }
+      },
+      methods: {
+        handleFilesChange (name, fileList) {
+          this.files = fileList
+        },
+
+        prepareData () {
+          const files = this.files
+          const data = new FormData()
+
+          data.append('file', files[0])
+
+          return data
+        },
+
+        submit (ev) {
+          const data = this.prepareData()
+          var config = {
+            onUploadProgress (progressEvent) {
+              var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
+            }
+          }
+          axios.post('/files', data, config)
+            .then(response => {
+              this.uploads.push(response.data)
+              console.log('response', response)
+            })
+            .catch(error => {
+              console.log(error)
+              debugger
+            })
+          },
+
+          getFilePath (file) {
+            return `https://f000.backblazeb2.com/b2api/v1/b2_download_file_by_id?fileId=${file.fileId}`
+          }
+      }
+    })
+
+    const vm = new Vue({
+      el: '#app'
+    })
+  </script>
+</body>
+</html>

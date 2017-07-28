@@ -5,6 +5,7 @@ const handler = require('feathers-errors/handler');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const multipartMiddleware = multer();
+const path = require('path')
 
 const B2 = require('backblaze-b2')
 const { files: fileService, buckets: bucketService } = require('../lib/')
@@ -29,14 +30,18 @@ const app = feathers()
   .use(bodyParser.json())
   // Turn on URL-encoded parser for REST services
   .use(bodyParser.urlencoded({extended: true}))
+  // Host the public folder
+  app.use('/', feathers.static(path.join(__dirname, './public')))
+
   // add the file endpoint
   .use('/files',
-    multipartMiddleware.single('uri'),
+    multipartMiddleware.single('file'),
 
     // another middleware, this time to
     // transfer the received file to feathers
     function(req,res,next){
         req.feathers.file = req.file;
+        req.body.bucketId = 'insert-bucket-id-here'
         next();
     },
 
@@ -46,12 +51,12 @@ const app = feathers()
   .use('/buckets', bucketService(options))
 
 // A basic error handler, just like Express
-app.use(handler());
+// app.use(handler());
 
 // Start the server if we're not being required in a test
 if (!module.parent) {
   app.listen(3030);
-  console.log('Feathers B2 service running on 127.0.0.1:3030');
+  console.log('Feathers B2 service running on http://127.0.0.1:3030');
 }
 
 module.exports = app;
