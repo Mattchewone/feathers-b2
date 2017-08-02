@@ -61,7 +61,9 @@
           var config = {
             onUploadProgress (progressEvent) {
               var percentCompleted = Math.round( (progressEvent.loaded * 100) / progressEvent.total );
-            }
+              console.log(percentCompleted)
+            },
+            timeout: 60*1000*25
           }
           axios.post('/files', data, config)
             .then(response => {
